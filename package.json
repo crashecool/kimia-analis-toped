@@ -4,7 +4,9 @@
   "private": true,
   "engines": { "node": ">=20.0.0" },
   "scripts": {
+    "predev": "node scripts/copy-pdf-worker.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-pdf-worker.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."

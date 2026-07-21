@@ -40,11 +40,8 @@ function cleanName(value: string) {
 }
 
 async function parseMerckPdf(file: File, onProgress: (page: number, total: number) => void) {
-  const [{ getDocument, GlobalWorkerOptions }, workerModule] = await Promise.all([
-    import("pdfjs-dist"),
-    import("pdfjs-dist/build/pdf.worker.min.mjs?url"),
-  ]);
-  GlobalWorkerOptions.workerSrc = workerModule.default;
+  const { getDocument, GlobalWorkerOptions } = await import("pdfjs-dist");
+  GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   const document = await getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
   const found = new Map<string, ParsedRow>();
 

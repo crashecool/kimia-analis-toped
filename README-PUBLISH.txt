@@ -59,6 +59,12 @@ F. UPDATE BERKALA
 4. Pilih CSV batch tersebut dan tekan tombol pembaruan.
 5. Tidak perlu deploy website ulang untuk memperbarui produk.
 
+MEMPERBARUI SOURCE DI GITHUB
+- Bila Anda menerima versi perbaikan, timpa file lama di repository GitHub
+  dengan isi paket baru lalu lakukan commit. Netlify akan melakukan deploy
+  ulang otomatis. Environment Variables yang sudah tersimpan tidak perlu
+  dimasukkan kembali.
+
 KEAMANAN
 - Katalog dapat dibaca publik.
 - Perubahan database hanya dapat melalui API server setelah login admin.

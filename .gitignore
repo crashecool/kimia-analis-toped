@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.netlify/
+.runtime/
+.env
+.env.local
+.env.production
+!.env.example
+npm-debug.log*
