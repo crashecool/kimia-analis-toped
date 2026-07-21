@@ -1,0 +1,31 @@
+UPDATE WEBSITE KE SEO V4
+========================
+
+1. Ekstrak paket V4.
+2. Di repository GitHub lokal, hapus file lama berikut bila masih ada:
+
+   public/images/hero-lab-product.png
+
+3. Salin seluruh isi paket V4 ke folder repository dan timpa file lama.
+4. Tambahkan Environment Variable berikut pada Netlify:
+
+   NEXT_PUBLIC_SITE_URL = alamat website Netlify Anda
+
+   Contoh: https://kimia-analis-toped.netlify.app
+
+5. Jalankan dari folder repository:
+
+   git add -A
+   git commit -m "Optimasi gambar dan SEO produk V4"
+   git push
+
+6. Tunggu Netlify menyelesaikan deploy.
+7. Periksa alamat berikut:
+
+   /robots.txt
+   /sitemap.xml
+   /produk/1.00983
+
+8. Jika ketiganya terbuka, daftarkan situs ke Google Search Console dan kirim
+   sitemap.xml. Data Supabase, login admin, dan hasil impor tidak terhapus oleh
+   pembaruan source ini.

@@ -41,6 +41,10 @@ D. PUBLIKASI DI NETLIFY
    NEXT_PUBLIC_SUPABASE_URL       = Project URL Supabase
    NEXT_PUBLIC_SUPABASE_ANON_KEY  = anon/publishable key Supabase
    SUPABASE_SERVICE_ROLE_KEY      = service_role/secret key Supabase
+   NEXT_PUBLIC_SITE_URL           = alamat lengkap website tanpa garis miring akhir
+
+   Contoh NEXT_PUBLIC_SITE_URL:
+   https://kimia-analis-toped.netlify.app
 
 7. Tekan Deploy. Setelah selesai, buka alamat .netlify.app yang diberikan.
 
@@ -60,6 +64,25 @@ F. UPDATE BERKALA
 3. Setelah selesai, buka /admin pada website.
 4. Pilih CSV batch tersebut dan tekan tombol pembaruan.
 5. Tidak perlu deploy website ulang untuk memperbarui produk.
+
+G. GOOGLE DAN SEO
+1. Setiap produk tersedia melalui /produk/MATERIAL-NUMBER.
+2. Sitemap dibuat otomatis dari Supabase di /sitemap.xml.
+3. Robots tersedia di /robots.txt; /admin dan /api tidak diindeks.
+4. Daftarkan alamat website melalui https://search.google.com/search-console.
+5. Kirim sitemap.xml melalui menu Sitemaps.
+6. Jika Google memberikan kode verifikasi meta, tambahkan nilainya di Netlify:
+
+   NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION = kode-verifikasi-google
+
+7. Setelah menambah atau mengubah Environment Variable, lakukan satu deploy
+   ulang agar metadata website ikut diperbarui.
+
+OPTIMASI BANDWIDTH V4
+- Gambar hero PNG 1,5 MB tidak lagi dipakai oleh halaman.
+- Browser modern menerima AVIF responsif sekitar 2-8 KB sesuai perangkat.
+- WebP sekitar 17 KB tersedia sebagai fallback.
+- File public/images/hero-lab-product.png lama boleh dihapus dari repository.
 
 MEMPERBARUI SOURCE DI GITHUB
 - Bila Anda menerima versi perbaikan, timpa file lama di repository GitHub

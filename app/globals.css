@@ -47,6 +47,7 @@ svg { width:24px; height:24px; }
 .trust-row strong { font-size:13px; }
 .trust-row small { color:var(--muted); font-size:11px; }
 .hero-visual { position:relative; min-height:710px; border-bottom-left-radius:90px; overflow:hidden; background:var(--mint); }
+.hero-visual picture { display:block; width:100%; height:100%; }
 .hero-visual:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(251,253,251,.2),transparent 25%); pointer-events:none; }
 .hero-visual img { width:100%; height:100%; display:block; object-fit:cover; object-position:center; }
 .catalog { padding:100px max(24px,calc((100vw - 1560px)/2)); background:var(--surface); }
@@ -268,3 +269,55 @@ footer small { grid-column:1/-1; padding-top:20px; border-top:1px solid rgba(255
 }
 .admin-login{width:min(92vw,480px);margin:10vh auto;padding:32px;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}
 .admin-login h1{margin:12px 0 8px}.admin-login>p{color:var(--muted);line-height:1.6}.admin-login form{margin:24px 0;display:grid;gap:15px}.admin-login label{display:grid;gap:7px;font-size:13px;font-weight:750}.admin-login input{min-height:48px;padding:0 13px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink)}
+
+.product-page { min-height:100vh; background:var(--paper); }
+.product-header { min-height:78px; padding:0 max(24px,calc((100vw - 1180px)/2)); display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid var(--line); background:var(--surface); }
+.product-header>a:last-child { color:var(--emerald); font-size:14px; font-weight:750; }
+.breadcrumbs { width:min(100% - 40px,1180px); margin:26px auto 0; display:flex; align-items:center; gap:9px; color:var(--muted); font-size:13px; }
+.breadcrumbs a:hover { color:var(--emerald); }
+.breadcrumbs strong { overflow:hidden; color:var(--ink); text-overflow:ellipsis; white-space:nowrap; }
+.product-detail { width:min(100% - 40px,1180px); margin:22px auto 80px; display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:24px; }
+.product-identity,.availability-card,.product-variants { border:1px solid var(--line); border-radius:22px; background:var(--surface); box-shadow:0 14px 40px rgba(25,72,52,.07); }
+.product-identity { padding:clamp(25px,4vw,48px); }
+.product-detail-meta { display:flex; flex-wrap:wrap; gap:9px; }
+.product-detail-meta span { padding:7px 11px; border-radius:9px; color:var(--emerald); background:var(--mint); font-size:12px; font-weight:800; }
+.product-identity h1 { margin:22px 0 13px; font-size:clamp(38px,5vw,64px); line-height:1.04; letter-spacing:-.055em; }
+.product-lead { max-width:780px; margin:0; color:var(--muted); font-size:17px; line-height:1.7; }
+.chemical-facts { margin:28px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:1px; overflow:hidden; border:1px solid var(--line); border-radius:14px; background:var(--line); }
+.chemical-facts div { min-width:0; padding:15px; background:var(--surface); }
+.chemical-facts dt { color:var(--muted); font-size:11px; font-weight:750; letter-spacing:.04em; text-transform:uppercase; }
+.chemical-facts dd { margin:5px 0 0; overflow-wrap:anywhere; font-weight:650; }
+.product-detail-actions { margin-top:25px; display:flex; flex-wrap:wrap; gap:11px; }
+.availability-card { align-self:start; padding:25px; position:sticky; top:24px; }
+.availability-card>span { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.availability-card>strong { display:block; margin:10px 0; color:var(--emerald); font-size:26px; letter-spacing:-.035em; }
+.availability-card p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+.product-variants { grid-column:1/-1; padding:28px; }
+.detail-section-title span { color:var(--emerald); font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+.detail-section-title h2 { margin:6px 0 18px; font-size:28px; letter-spacing:-.035em; }
+.detail-variant-list { overflow:hidden; border:1px solid var(--line); border-radius:14px; }
+.detail-variant { padding:13px 15px; display:grid; grid-template-columns:minmax(160px,1fr) auto auto; align-items:center; gap:14px; border-top:1px solid var(--soft-line); }
+.detail-variant:first-child { border-top:0; }
+.detail-variant>div { display:flex; flex-direction:column; gap:3px; }
+.detail-variant small { color:var(--muted); }
+.detail-variant>a { min-height:38px; padding:0 13px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; color:white; background:var(--emerald); font-size:12px; font-weight:800; }
+.no-variants { margin:0; padding:20px; border-radius:13px; color:var(--muted); background:var(--pale); }
+.product-footer { padding:38px max(24px,calc((100vw - 1180px)/2)); display:flex; align-items:center; justify-content:space-between; gap:20px; color:#c7d5ce; background:#0f241c; }
+.product-footer p { margin:0; font-size:13px; }
+
+@media (max-width:760px) {
+  .product-header { min-height:70px; padding:0 16px; }
+  .product-header .brand { font-size:15px; }
+  .product-header>a:last-child { font-size:12px; }
+  .breadcrumbs,.product-detail { width:min(100% - 24px,1180px); }
+  .product-detail { grid-template-columns:1fr; margin-bottom:50px; }
+  .product-identity { padding:24px 18px; }
+  .product-identity h1 { font-size:39px; }
+  .chemical-facts { grid-template-columns:1fr; }
+  .product-detail-actions { flex-direction:column; }
+  .availability-card { position:static; }
+  .product-variants { grid-column:auto; padding:20px 14px; }
+  .detail-variant { grid-template-columns:1fr auto; }
+  .detail-variant>a { grid-column:1/-1; }
+  .product-footer { align-items:flex-start; flex-direction:column; }
+}

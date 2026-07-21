@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import Link from "next/link";
 
 const whatsappNumber = "6289652809692";
 
@@ -175,7 +175,7 @@ export default function Home() {
             <div><span><Icon name="box" /></span><p><strong>Ready &amp; Cek Stok</strong><small>Status mudah dikenali</small></p></div>
           </div>
         </div>
-        <div className="hero-visual"><Image src="/images/hero-lab-product.png" alt="Botol reagen amber dan peralatan gelas laboratorium" fill priority unoptimized sizes="(max-width: 820px) 100vw, 50vw" /></div>
+        <div className="hero-visual"><picture><source media="(max-width: 520px)" srcSet="/images/hero-mobile.avif" type="image/avif"/><source media="(max-width: 900px)" srcSet="/images/hero-tablet.avif" type="image/avif"/><source srcSet="/images/hero-desktop.avif" type="image/avif"/><img src="/images/hero-fallback.webp" alt="Botol reagen amber dan peralatan gelas laboratorium" width="1200" height="900" fetchPriority="high" decoding="async"/></picture></div>
       </section>
 
       <section className="catalog" id="katalog">
@@ -205,7 +205,7 @@ export default function Home() {
                   <div className="product-copy">
                     <div className="product-meta"><span>{product.brand}</span><span>{product.rating !== "—" ? `★ ${product.rating}` : "Produk analisis"}</span></div>
                     <p className="material">{product.number}</p>
-                    <h3>{product.name}</h3>
+                    <h3><Link href={`/produk/${encodeURIComponent(product.number)}`}>{product.name}</Link></h3>
                     <p>{product.description || "Data dasar dari pricelist · detail menunggu sinkronisasi Sigma-Aldrich"}</p>
                     <dl><div><dt>Sinonim</dt><dd>{product.synonyms || "—"}</dd></div><div><dt>CAS</dt><dd>{product.cas || "—"}</dd></div></dl>
                     <div className="stock-summary" aria-label="Ringkasan ketersediaan">
