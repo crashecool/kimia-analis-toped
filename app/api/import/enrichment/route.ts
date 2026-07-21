@@ -10,37 +10,49 @@ function baseNumber(value: string) {
   return /^[18]\d{5}$/.test(digits) ? `${digits[0]}.${digits.slice(1)}` : "";
 }
 
+function errorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error) return String(error.message);
+  return "Impor data pelengkap gagal tanpa keterangan dari server.";
+}
+
 export async function POST(request: Request) {
   try {
     if (!await requireAdmin(request)) return Response.json({ error: "Login admin diperlukan." }, { status: 401 });
     const payload = (await request.json()) as { rows?: EnrichmentRow[] };
     const rows = (payload.rows ?? []).slice(0, 250);
     const db = adminDb();
-    let matched = 0; let unmatched = 0;
+    const validRows = rows.map((row) => ({ ...row, material: baseNumber(row.materialNumber ?? "") })).filter((row) => row.material);
+    const materials = [...new Set(validRows.map((row) => row.material))];
+    const { data: currentProducts, error: readError } = await db.from("products").select("*").in("base_number", materials);
+    if (readError) throw readError;
+    const currentByNumber = new Map((currentProducts ?? []).map((product) => [product.base_number, product]));
+    const timestamp = new Date().toISOString();
+    const grouped = new Map<string, EnrichmentRow[]>();
+    for (const row of validRows) grouped.set(row.material, [...(grouped.get(row.material) ?? []), row]);
+    const pick = (items: EnrichmentRow[], key: keyof EnrichmentRow, fallback: string) => items.find((item) => item[key]?.trim())?.[key]?.trim() || fallback;
 
-    for (const row of rows) {
-      const material = baseNumber(row.materialNumber ?? "");
-      if (!material) { unmatched += 1; continue; }
-      const { data: current } = await db.from("products").select("*").eq("base_number", material).maybeSingle();
-      if (!current) { unmatched += 1; continue; }
-      const value = (candidate: string | undefined, fallback: string) => candidate?.trim() || fallback;
-      const { error } = await db.from("products").update({
-        name: value(row.name, current.name), brand: value(row.brand, current.brand), cas: value(row.cas, current.cas),
-        synonyms: value(row.synonyms, current.synonyms), description: value(row.description, current.description),
-        enrichment_status: "complete", updated_at: new Date().toISOString(),
-      }).eq("id", current.id);
-      if (error) throw error;
-
-      const sku = row.sku?.trim() ?? "";
-      if (/^[18]\.\d{5}\.\d{4}$/.test(sku)) {
-        const availability = /ready/i.test(row.availability ?? "") ? "Ready" : "Indent";
-        const { error: variantError } = await db.from("variants").upsert({ product_id: current.id, sku, size: row.size?.trim() || "Lihat spesifikasi", availability, updated_at: new Date().toISOString() }, { onConflict: "sku" });
-        if (variantError) throw variantError;
-      }
-      matched += 1;
+    const productRows = Array.from(grouped).flatMap(([material, items]) => {
+      const current = currentByNumber.get(material); if (!current) return [];
+      return [{ id: current.id, base_number: current.base_number, name: pick(items, "name", current.name), brand: pick(items, "brand", current.brand),
+        cas: pick(items, "cas", current.cas), synonyms: pick(items, "synonyms", current.synonyms), description: pick(items, "description", current.description),
+        sds_url: current.sds_url, source_url: current.source_url, enrichment_status: "complete", updated_at: timestamp }];
+    });
+    if (productRows.length) {
+      const { error: updateError } = await db.from("products").upsert(productRows, { onConflict: "base_number" });
+      if (updateError) throw updateError;
     }
-    return Response.json({ matched, unmatched });
+    const variants = validRows.flatMap((row) => {
+      const current = currentByNumber.get(row.material); const sku = row.sku?.trim() ?? "";
+      if (!current || !/^[18]\.\d{5}\.\d{4}$/.test(sku)) return [];
+      return [{ product_id: current.id, sku, size: row.size?.trim() || "Lihat spesifikasi", availability: /ready/i.test(row.availability ?? "") ? "Ready" : "Indent", updated_at: timestamp }];
+    });
+    if (variants.length) {
+      const { error: variantError } = await db.from("variants").upsert(variants, { onConflict: "sku" });
+      if (variantError) throw variantError;
+    }
+    return Response.json({ matched: validRows.filter((row) => currentByNumber.has(row.material)).length, unmatched: rows.length - validRows.filter((row) => currentByNumber.has(row.material)).length });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Impor data pelengkap gagal." }, { status: 500 });
+    return Response.json({ error: errorMessage(error) }, { status: 500 });
   }
 }

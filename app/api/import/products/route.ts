@@ -13,6 +13,12 @@ function productData(sku: string) {
   };
 }
 
+function errorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error) return String(error.message);
+  return "Impor gagal tanpa keterangan dari server.";
+}
+
 export async function POST(request: Request) {
   try {
     if (!await requireAdmin(request)) return Response.json({ error: "Login admin diperlukan." }, { status: 401 });
@@ -29,17 +35,25 @@ export async function POST(request: Request) {
       else grouped.set(info.baseNumber, { name: row.name, skus: [row.sku], sdsUrl: info.sdsUrl, sourceUrl: info.sourceUrl });
     }
 
-    let imported = 0;
-    for (const [baseNumber, product] of grouped) {
-      const { data: saved, error } = await db.from("products").upsert({ base_number: baseNumber, name: product.name, brand: "Merck", sds_url: product.sdsUrl, source_url: product.sourceUrl, updated_at: new Date().toISOString() }, { onConflict: "base_number" }).select("id").single();
-      if (error) throw error;
-      const variants = product.skus.map((sku) => ({ product_id: saved.id, sku, size: "Lihat spesifikasi", availability: "Indent", updated_at: new Date().toISOString() }));
-      const { error: variantError } = await db.from("variants").upsert(variants, { onConflict: "sku" });
-      if (variantError) throw variantError;
-      imported += variants.length;
-    }
-    return Response.json({ imported, products: grouped.size });
+    const timestamp = new Date().toISOString();
+    const productRows = Array.from(grouped, ([baseNumber, product]) => ({
+      base_number: baseNumber, name: product.name, brand: "Merck",
+      sds_url: product.sdsUrl, source_url: product.sourceUrl, updated_at: timestamp,
+    }));
+    const { data: savedProducts, error: productError } = await db.from("products")
+      .upsert(productRows, { onConflict: "base_number" }).select("id,base_number");
+    if (productError) throw productError;
+
+    const ids = new Map((savedProducts ?? []).map((product) => [product.base_number, product.id]));
+    const variants = Array.from(grouped).flatMap(([baseNumber, product]) => {
+      const productId = ids.get(baseNumber);
+      if (!productId) return [];
+      return product.skus.map((sku) => ({ product_id: productId, sku, size: "Lihat spesifikasi", availability: "Indent", updated_at: timestamp }));
+    });
+    const { error: variantError } = await db.from("variants").upsert(variants, { onConflict: "sku" });
+    if (variantError) throw variantError;
+    return Response.json({ imported: variants.length, products: savedProducts?.length ?? 0 });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Impor gagal." }, { status: 500 });
+    return Response.json({ error: errorMessage(error) }, { status: 500 });
   }
 }

@@ -51,6 +51,8 @@ E. MENGISI KATALOG PERTAMA KALI
 4. Setelah itu unggah CSV hasil Sigma Scraper GUI per batch 500.
 5. CSV dicocokkan berdasarkan material number; ukuran, SKU, CAS, nama, sinonim,
    deskripsi, dan status Ready/Cek Stok diperbarui otomatis.
+6. Impor diproses massal per 200 baris agar stabil pada batas waktu Netlify.
+   Jangan menutup halaman admin selama persentase masih berjalan.
 
 F. UPDATE BERKALA
 1. Jalankan Sigma Scraper GUI di komputer.
